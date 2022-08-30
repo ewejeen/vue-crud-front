@@ -1,24 +1,13 @@
-# frontend
+# Vue JS로 게시판 만들기 - Frontend
 
-## Project setup
-```
-npm install
-```
+Vue JS + Spring Boot로 게시판 CRUD 만들기 연습
 
-### Compiles and hot-reloads for development
-```
-npm run serve
-```
-
-### Compiles and minifies for production
-```
-npm run build
-```
-
-### Lints and fixes files
-```
-npm run lint
-```
-
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+- 목록
+  - 조회
+  - 검색
+  - 페이징
+- 상세
+  - 조회
+- 등록
+- 수정
+- 삭제
