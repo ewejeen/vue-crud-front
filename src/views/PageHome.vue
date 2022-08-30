@@ -1,16 +1,11 @@
-<!-- PageHome.vue -->
 <template>
-  <div class="list">
-    board list
+  <div class="home">
+    <h1>Welcome to Yoojin's Vue.js App"</h1>
   </div>
 </template>
 
 <script>
-
 export default {
-  name: 'BoardList',
-  components: {
-   // HelloWorld
-  }
+  name: 'PageHome',
 }
 </script>
