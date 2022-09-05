@@ -2,33 +2,37 @@
 <template>
   <div class="list">
     <h1>공지사항</h1>
-    <table>
-      <colgroup>
-        <col style="width: 50px;">
-        <col>
-        <col style="width: 200px;">
-        <col style="width: 150px;">
-      </colgroup>
-      <thead>
-        <tr>
-          <th scope="col">번호</th>
-          <th scope="col">제목</th>
-          <th scope="col">작성일</th>
-          <th scope="col">작성자</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr v-if="!list">
-          <td colspan="4">게시글이 없습니다.</td>
-        </tr>
-        <tr v-for="(item, idx) in filteredList" v-bind:key="idx">
-          <td>{{item.rnum}}</td>
-          <td>{{item.title}}</td>
-          <td>{{item.registerDate}}</td>
-          <td>{{item.registerName}}</td>
-        </tr>
-      </tbody>
-    </table>
+    <div id="tableDiv">
+      <table>
+        <colgroup>
+          <col style="width: 50px;">
+          <col>
+          <col style="width: 200px;">
+          <col style="width: 150px;">
+        </colgroup>
+        <thead>
+          <tr>
+            <th scope="col">번호</th>
+            <th scope="col">제목</th>
+            <th scope="col">작성일</th>
+            <th scope="col">작성자</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-if="!list">
+            <td colspan="4">게시글이 없습니다.</td>
+          </tr>
+          <tr v-for="(item, idx) in filteredList" v-bind:key="idx">
+            <td>{{item.rnum}}</td>
+            <td style="cursor:pointer;">
+              <router-link :to="{path: '/board/view/' + item.rnum}">{{item.title}}</router-link>
+            </td>
+            <td>{{item.registerDate}}</td>
+            <td>{{item.registerName}}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
 
 <!--    <div class="paging-box textCenter paging">
       <ui:pagination paginationInfo="${paginationInfo}" type="image" jsFunction="fn_link_page" />
@@ -37,9 +41,9 @@
     </div>-->
 
     <div id="paging">
-      <form>
-        <button v-for="i in filteredPaging" :class="{on: i==this.paging.pageNo}" v-bind:key="i">{{i}}</button>
-      </form>
+      <button v-if="this.paging.startPageNo != 1" v-on:click="fnGetList(this.paging.startPageNo - 1)">&lt;</button>
+      <button v-for="i in filteredPaging" :class="{on: i==this.paging.pageNo}" @click="fnGetList(i)" v-bind:key="i">{{i}}</button>
+      <button v-on:click="fnGetList(this.paging.endPageNo + 1)">&gt;</button>
     </div>
   </div>
 </template>
@@ -57,20 +61,22 @@ export default {
       list: [], //리스트 데이터
       paging: {
         totalCount: 0,
-        pageNo: 0,
+        pageNo: 1,
         pageSize: 0,
       },
       pageList: []
     }
   },
   mounted() {
-    this.fnGetList()
+    this.fnGetList(this.pageNo)
   },
   methods: {
-    fnGetList() {
+    fnGetList(page) {
+      this.pageNo = page;
+
       this.requestBody = { // 데이터 전송
         //searchKeyword: 'R&D',
-        pageNo: this.pageNo
+        pageNo: page
       }
 
       this.$axios.get("/board/getList", {
@@ -83,12 +89,15 @@ export default {
         this.list = res.data.list;
         this.paging = res.data.paging;
 
+        this.pageList = [];
         for(let s=1;s<=res.data.paging.totalCount;s++){
           this.pageList.push(s);
         }
       }).catch((err) => {
         if (err.message.indexOf('Network Error') > -1) {
           alert('네트워크가 원활하지 않습니다.\n잠시 후 다시 시도해주세요.')
+        } else{
+          alert('서버 오류가 발생했습니다.\n잠시 후 다시 시도해주세요.')
         }
       })
     }
@@ -110,7 +119,7 @@ export default {
         }
 
         const paging = this.paging;
-        item.rnum = paging.totalCount - ((paging.pageNo - 1) * paging.pageSize  + index);
+        item.rnum = paging.totalCount - ((paging.pageNo - 1) * paging.pageSize  + (index));
       })
 
       return this.list;
@@ -131,7 +140,8 @@ export default {
 
 <style scoped>
   .list{min-height:700px;}
-  table { width: 1000px; margin:0 auto;}
+  #tableDiv{height:450px}
+  table { width: 1000px; margin:0 auto; min-height:400px;}
   table th,td{border: 1px solid #aaa; border-collapse: collapse;}
 
   #paging{margin-top:40px;}

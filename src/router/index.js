@@ -1,5 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import PageHome from '@/views/PageHome.vue'
+import BoardList from '@/views/BoardList.vue'
+import BoardView from '@/views/BoardView.vue'
 
 const routes = [
     {
@@ -10,10 +12,12 @@ const routes = [
     {
         path: '/board/list',
         name: 'BoardList',
-        // route level code-splitting
-        // this generates a separate chunk (about.[hash].js) for this route
-        // which is lazy-loaded when the route is visited.
-        component: () => import(/* webpackChunkName: "about" */ '../views/BoardList.vue')
+        component: BoardList
+    },
+    {
+        path: '/board/view/:rnum',
+        name: 'BoardView',
+        component: BoardView
     }
 ]
 
